@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:16-alpine3.19
+        ports:
+        - containerPort: 5432
+        envFrom:
+          - configMapRef:
+              name: postgres-configmap
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  selector:
+    app.kubernetes.io/name: postgres
+  type: ClusterIP
+  ports:
+    - port: 5432
+      targetPort: 5432
